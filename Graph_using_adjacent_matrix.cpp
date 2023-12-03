@@ -13,7 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <stack>
+#include <unordered_set>
 
 // Visualization of graph from the example
 //
@@ -56,6 +56,8 @@ public:
 private:
     int V; // Number of vertices
     std::vector<std::vector<int>> adjacencyMatrix;
+
+    void DFSUtil(int vertex, std::unordered_set<int>& visited);
 };
 
 void Graph::BFS(int startVertex) {
@@ -84,30 +86,21 @@ void Graph::BFS(int startVertex) {
 }
 
 void Graph::DFS(int startVertex) {
-    std::vector<bool> visited(V, false);
-    std::stack<int> s;
-
+    std::unordered_set<int> visited;
     std::cout << "DFS starting from vertex " << startVertex << ": ";
+    DFSUtil(startVertex, visited);
+    std::cout << std::endl;
+}
 
-    s.push(startVertex);
+void Graph::DFSUtil(int vertex, std::unordered_set<int>& visited) {
+    visited.insert(vertex);
+    std::cout << vertex << " ";
 
-    while (!s.empty()) {
-        int currentVertex = s.top();
-        s.pop();
-
-        if (!visited[currentVertex]) {
-            std::cout << currentVertex << " ";
-            visited[currentVertex] = true;
-        }
-
-        for (int neighbor = V - 1; neighbor >= 0; neighbor--) {
-            if (adjacencyMatrix[currentVertex][neighbor] == 1 && !visited[neighbor]) {
-                s.push(neighbor);
-            }
+    for (int neighbor = 0; neighbor < V; neighbor++) {
+        if (adjacencyMatrix[vertex][neighbor] == 1 && visited.find(neighbor) == visited.end()) {
+            DFSUtil(neighbor, visited);
         }
     }
-
-    std::cout << std::endl;
 }
 
 int main()
