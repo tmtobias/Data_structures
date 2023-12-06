@@ -52,6 +52,31 @@ public:
         }
         return true;
     }
+
+    void printAllWordsWithPrefix(const std::string& prefix) {
+        TrieNode* current = root;
+        for (char ch : prefix) {
+            if (current->children.find(ch) == current->children.end()) {
+                return;
+            }
+            current = current->children[ch];
+        }
+
+        std::string currentWord = prefix;
+        printAllWordsWithPrefixHelper(current, currentWord);
+    }
+
+    void printAllWordsWithPrefixHelper(TrieNode* node, std::string& currentWord) {
+        if (node->isEndOfWord) {
+            std::cout << currentWord << std::endl;
+        }
+
+        for (auto& child : node->children) {
+            currentWord.push_back(child.first);
+            printAllWordsWithPrefixHelper(child.second, currentWord);
+            currentWord.pop_back();
+        }
+    }
 };
 
 int main()
@@ -61,6 +86,8 @@ int main()
     trie.insert("apple");
     trie.insert("app");
     trie.insert("apricot");
+    trie.insert("car");
+    trie.insert("carrot");
 
     std::cout << std::boolalpha;
     std::cout << "Search for 'apple': " << trie.search("apple") << std::endl;      // true
@@ -68,6 +95,8 @@ int main()
     std::cout << "Search for 'apricot': " << trie.search("apricot") << std::endl;  // true
     std::cout << "Search for 'apri': " << trie.search("apri") << std::endl;        // false
     std::cout << "StartsWith 'apri': " << trie.startsWith("apri") << std::endl;    // true
+
+    trie.printAllWordsWithPrefix("apricot");
 
     return 0;
 }
